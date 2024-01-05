@@ -215,6 +215,8 @@ class TagDetector
       const cv_bridge::CvImagePtr& image,
       const sensor_msgs::CameraInfoConstPtr& camera_info);
 
+  std::vector<geometry_msgs::Point> getImagePoints(const std::vector<cv::Point2d >& imagePoints);
+
   // Get the pose of the tag in the camera frame
   // Returns homogeneous transformation matrix [R,t;[0 0 0 1]] which
   // takes a point expressed in the tag frame to the same point

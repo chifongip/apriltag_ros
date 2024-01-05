@@ -29,8 +29,6 @@
  * Technology.
  */
 
-#include <ros/ros.h>
-
 #include "apriltag_ros/common_functions.h"
 #include "image_geometry/pinhole_camera_model.h"
 
@@ -351,6 +349,9 @@ AprilTagDetectionArray TagDetector::detectTags (
 
     // Add the detection to the back of the tag detection array
     AprilTagDetection tag_detection;
+
+    tag_detection.image_points = getImagePoints(standaloneTagImagePoints);
+
     tag_detection.pose = tag_pose;
     tag_detection.id.push_back(detection->id);
     tag_detection.size.push_back(tag_size);
@@ -511,7 +512,7 @@ Eigen::Isometry3d TagDetector::getRelativeTransform(
   // need to first check WHAT is a bottleneck in this code, and only
   // do this if PnP solution is the bottleneck.
 
-  ROS_INFO_STREAM("image points: " << imagePoints);
+  // ROS_INFO_STREAM("image points: " << imagePoints);
 
   cv::solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec);
   cv::Matx33d R;
@@ -524,6 +525,21 @@ Eigen::Isometry3d TagDetector::getRelativeTransform(
   T.translation() = Eigen::Vector3d::Map(reinterpret_cast<const double*>(tvec.data));
 
   return T;
+}
+
+std::vector<geometry_msgs::Point> TagDetector::getImagePoints(const std::vector<cv::Point2d >& imagePoints)
+{
+  std::vector<geometry_msgs::Point> image_points_array;
+
+  for (int i=0; i<4; i++)
+  {
+    geometry_msgs::Point image_points_buffer;
+    image_points_buffer.x = imagePoints[i].x;
+    image_points_buffer.y = imagePoints[i].y;
+    image_points_array.push_back(image_points_buffer);
+  }
+
+  return image_points_array;
 }
 
 geometry_msgs::PoseWithCovarianceStamped TagDetector::makeTagPose(

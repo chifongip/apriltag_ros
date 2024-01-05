@@ -12,3 +12,5 @@ float64[] size
 # homography is from at least the four corners of one member tag and at most the
 # four corners of all member tags.
 geometry_msgs/PoseWithCovarianceStamped pose
+
+geometry_msgs/Point[] image_points
