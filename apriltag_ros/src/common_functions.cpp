@@ -29,6 +29,8 @@
  * Technology.
  */
 
+#include <ros/ros.h>
+
 #include "apriltag_ros/common_functions.h"
 #include "image_geometry/pinhole_camera_model.h"
 
@@ -508,6 +510,9 @@ Eigen::Isometry3d TagDetector::getRelativeTransform(
   // TODO Perhaps something like SOLVEPNP_EPNP would be faster? Would
   // need to first check WHAT is a bottleneck in this code, and only
   // do this if PnP solution is the bottleneck.
+
+  ROS_INFO_STREAM("image points: " << imagePoints);
+
   cv::solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec);
   cv::Matx33d R;
   cv::Rodrigues(rvec, R);
